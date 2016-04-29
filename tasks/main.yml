@@ -22,6 +22,7 @@
     mode: 0700
     state: directory
   with_dict: "{{ hidden_service_services }}"
+  register: hidden_service_creation
   when: item.value.hidden_service_state|default('present') == 'present'
 
 - name: ensure hidden service configuration is latest
@@ -33,6 +34,12 @@
     mode: 0644
   notify:
     - restart tor
+
+- name: restart tor immediatly to generate new hostnames and private keys
+  service:
+    name: tor
+    state: restarted
+  when: hidden_service_creation|changed
 
 - name: ensure hostname file are present
   template:
@@ -79,3 +86,18 @@
      state: stopped
   notify: stop tor
   when: not hidden_service_active
+
+- name: get hostname of new registered hiddenservice
+  command: "cat /var/lib/tor/{{ item.key }}/hostname"
+  register: created_hostnames
+  with_dict: "{{ hidden_service_services }}"
+  when: item.value.hidden_service_hostname == None
+  tags: hfoo
+
+- name: print created or missing onion hostname
+  debug:
+    msg: "A hidden service for /var/lib/tor/{{ item.item.key }}/ was created or the address is not present in your vars file.
+          It's reachable via {{ item.stdout }} . Don't forget to add hostname and privatekey to your vars file"
+  with_items:
+    - "{{ created_hostnames.results }}"
+  when: item.changed
