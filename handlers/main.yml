@@ -1,9 +1,7 @@
 ---
 # handlers file for hidden-service
 - name: restart tor
-  service:
-    name: tor
-    state: restarted
+  include: restart-tor-carefully.yml
 
 - name: stop tor
   service:
