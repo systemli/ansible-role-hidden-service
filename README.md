@@ -1,8 +1,9 @@
 ansible-role-hidden-service
 ===========================
 
-[![Build Status](https://travis-ci.org/systemli/ansible-role-hidden-service.svg)](https://travis-ci.org/systemli/ansible-role-hidden-service) [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-hiddenservice-blue.svg)](https://galaxy.ansible.com/systemli/hidden-service/)
+DEPRECATED: Please use [systemli.onion](https://github.com/systemli/ansible-role-onion) from now on.
 
+---
 
 Install and configure one or multiple Tor Hidden Services.
 
